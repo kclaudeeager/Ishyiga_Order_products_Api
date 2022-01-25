@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 @EnableJpaAuditing
-public class CSEApplication {
+public class Orderspplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CSEApplication.class, args);
