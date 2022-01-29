@@ -1,11 +1,16 @@
 package com.cse.api;
 
 import com.cse.api.service.AuthFilter;
+import com.cse.api.service.EmailSender;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -13,9 +18,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 @EnableJpaAuditing
 public class Orderspplication {
-
+	@Autowired
+private EmailSender mailSender;
 	public static void main(String[] args) {
-		SpringApplication.run(CSEApplication.class, args);
+		SpringApplication.run(Orderspplication.class, args);
 	}
 
 	@Configuration
@@ -39,6 +45,16 @@ public class Orderspplication {
 				"/api/v1/products/*",
 				"/api/v1/User/logout");
 		return registrationBean;
+	}
+	@EventListener(ApplicationReadyEvent.class)
+	public void trigerMail() {
+		String password="fljbcpaivjvzvoxf";
+		String tomail="claudekwizera003@gmail.com";
+		String subject="Testing Mailsender";
+		String body="Hello this is Email from Springboot backend";
+		//email.SendSimpleEmail(tomail,subject,body);
+		//mailSender.SendSimpleEmail("ngabonziza@gmail.com","Hello this is Email from Springboot backend by mr. claude", "Testing Mailsender");
+		mailSender.semdEmailWithAttachement(tomail, body, subject,"D:\\2nd_Year\\Semester I\\2nd_Year\\Semester I\\CCN A\\supcfg.pdf");
 	}
 
 }
