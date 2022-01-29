@@ -18,8 +18,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 @EnableJpaAuditing
 public class Orderspplication {
-	@Autowired
-private EmailSender mailSender;
+
 	public static void main(String[] args) {
 		SpringApplication.run(Orderspplication.class, args);
 	}
@@ -43,18 +42,10 @@ private EmailSender mailSender;
 		registrationBean.addUrlPatterns(
 				"/api/v1/User/setrole/*",
 				"/api/v1/products/*",
-				"/api/v1/User/logout");
+				"/api/v1/User/logout",
+				"/api/v1/order/*",
+				"api/v1/setrole/*");
 		return registrationBean;
 	}
-	@EventListener(ApplicationReadyEvent.class)
-	public void trigerMail() {
-		String password="fljbcpaivjvzvoxf";
-		String tomail="claudekwizera003@gmail.com";
-		String subject="Testing Mailsender";
-		String body="Hello this is Email from Springboot backend";
-		//email.SendSimpleEmail(tomail,subject,body);
-		//mailSender.SendSimpleEmail("ngabonziza@gmail.com","Hello this is Email from Springboot backend by mr. claude", "Testing Mailsender");
-		mailSender.semdEmailWithAttachement(tomail, body, subject,"D:\\2nd_Year\\Semester I\\2nd_Year\\Semester I\\CCN A\\supcfg.pdf");
-	}
-
+	
 }

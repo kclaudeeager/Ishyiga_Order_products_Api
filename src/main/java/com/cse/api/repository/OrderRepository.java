@@ -3,10 +3,9 @@ package com.cse.api.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.cse.api.model.Product;
+import com.cse.api.model.Order;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
-	Product findById(String productctId);
-    	
+public interface OrderRepository extends JpaRepository<Order, Long> {
+    Order findById(String orderId);
 }

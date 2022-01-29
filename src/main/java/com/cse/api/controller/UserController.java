@@ -24,6 +24,7 @@ import com.cse.api.constants.Constants;
 import com.cse.api.exception.ResourceNotFoundException;
 
 import com.cse.api.repository.UserRepository;
+import com.cse.api.model.Product;
 import com.cse.api.model.User;
 
 import com.cse.api.service.UserService;
@@ -47,6 +48,30 @@ public class UserController {
 	}
 
 	User user;
+	@GetMapping("/company/{role}")
+	public List<String> getAllCompanies(HttpServletRequest request,@PathVariable(value = "role") Integer role) 
+		  {
+			    List<String> suppliers=userRepository.findCompany(role);
+			 
+			    if(suppliers==null) {
+			    	new ResourceNotFoundException("No users found with the role :: " + role);
+			    }
+			    return suppliers;        
+	
+	}
+	@GetMapping("/email/{company}")
+	public String getUserEmailByCompany(HttpServletRequest request,@PathVariable(value = "company") String company) 
+		  {
+			    String email=userRepository.findEmailByCompany(company);
+			 
+			    if(email==null) {
+			    	new ResourceNotFoundException("No such email found with such company:: " +company);
+			    }
+			    return email;        
+	
+	}
+	
+	
 
 	@PostMapping("/login")
 	public ResponseEntity<Object> login(@RequestBody Map<String, Object> UserMap)
@@ -99,6 +124,7 @@ public class UserController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<Object> signup(@RequestBody User User) throws javax.security.auth.message.AuthException {
+		User.setRole(0);
 		User UserCreated = userService.registerUser(User);
 
 		Map<String, Object> data = new HashMap<String, Object>();

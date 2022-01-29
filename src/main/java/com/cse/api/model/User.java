@@ -30,7 +30,7 @@ public class User {
 	@Column(name = "password", nullable = false, length = 64)
 	private String password;
 
-	@Column(name = "company", nullable = false, length = 64)
+	@Column(name = "company", nullable = false, length = 64,unique=true)
 	private String company;
 	@Column(name = "role", length = 1, columnDefinition = "integer default 0")
 	private int role;
