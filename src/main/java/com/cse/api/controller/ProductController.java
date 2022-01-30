@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.cse.api.exception.ResourceNotFoundException;
@@ -34,7 +35,8 @@ public class ProductController {
   }
 
   @GetMapping("/products")
-  public List<Product> getAllProducts() {
+  public List<Product> getAllProducts(HttpServletRequest request) {
+    System.out.println("Request::: "+request.toString());
     return productRepository.findAll();
   }
 

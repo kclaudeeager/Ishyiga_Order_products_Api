@@ -1,16 +1,21 @@
 package com.cse.api.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import com.cse.api.exception.ResourceNotFoundException;
 import com.cse.api.model.Order;
+import com.cse.api.model.User;
 import com.cse.api.model.Email;
 import com.cse.api.repository.OrderRepository;
+import com.cse.api.repository.UserRepository;
 import com.cse.api.service.EmailSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -30,34 +36,86 @@ public class OrderController {
 private EmailSender mailSender;
   @Autowired
   private OrderRepository orderRepository;
+  @Autowired
+  private UserRepository userRepository;
 
 
   @PostMapping("/orders")
-  public Order creatOrder(@Valid @RequestBody Order order) throws ResourceNotFoundException {
-    return orderRepository.save(order);
+  public Order creatOrder(HttpServletRequest request,@Valid @RequestBody Order order) throws ResourceNotFoundException {
+    User user=userRepository.findByEmailAddress(request.getAttribute("email").toString());
+    String client=user.getCompany();
+    order.setclient(client);
+   
+    User supplier=userRepository.findByCompany(order.getsuplier());
+    Order newOrder=new Order();
+
+
+    if(supplier==null){
+      new ResourceNotFoundException("No such supplier found :: ");
+      
+    }
+    else{
+      newOrder=orderRepository.save(order);;
+    }
+    System.out.println("the   suplier: "+supplier);
+    System.out.println("Client: "+client+" Set "+order.getclient());
+    return newOrder;
   }
 
   @GetMapping("/orders")
-  public List<Order> getAllOrders() {
-    return orderRepository.findAll();
+  public List<Order> getAllOrders(HttpServletRequest request) {
+    List<Order> orders=new ArrayList<Order>();
+    String role=request.getAttribute("role").toString();
+    int rol=Integer.parseInt(role);
+    if(rol==4){
+      orders= orderRepository.findAll();
+    }
+    else{
+      User user=userRepository.findByEmailAddress(request.getAttribute("email").toString());
+       String company=user.getCompany();
+      if(company!=null){
+        orders=orderRepository.findByClient(company);
+      }
+    }
+    return orders;
   }
 
   @GetMapping("/orders/{id}")
-  public ResponseEntity<Order> getOrderById(@PathVariable(value = "id") Long orderId)
-      throws ResourceNotFoundException {
+  public ResponseEntity<Order> getOrderById(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "id") Long orderId)
+      throws ResourceNotFoundException, IOException {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new ResourceNotFoundException("order not found :: " + orderId));
-    return ResponseEntity.ok().body(order);
+        User user=userRepository.findByEmailAddress(request.getAttribute("email").toString());
+        String company=user.getCompany();
+
+        ResponseEntity<Order> responseEntity=null;
+        if(order.getclient()==company || order.getsuplier()==company){
+          responseEntity=ResponseEntity.ok().body(order);
+
+} 
+else{
+  response.sendError(HttpStatus.FORBIDDEN.value(), "you are not authorized to view such order");
+  
+}
+return responseEntity;
   }
 
   @DeleteMapping("/orders/{id}")
-  public Map<String, Boolean> deleteOrder(@PathVariable(value = "id") Long orderId)
-      throws ResourceNotFoundException {
+  public Map<String, Boolean> deleteOrder(HttpServletRequest request,HttpServletResponse httpresponse,@PathVariable(value = "id") Long orderId)
+      throws ResourceNotFoundException, IOException {
     Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new ResourceNotFoundException("order not found :: " + orderId));
-  orderRepository.delete(order);
-    Map<String, Boolean> response = new HashMap<>();
-    response.put("deleted", Boolean.TRUE);
+        User user=userRepository.findByEmailAddress(request.getAttribute("email").toString());
+        String company=user.getCompany();
+        Map<String, Boolean> response = new HashMap<>();
+        if(order.getclient()==company){
+          orderRepository.delete(order);
+          response.put("deleted", Boolean.TRUE);
+} else{
+  httpresponse.sendError(HttpStatus.FORBIDDEN.value(), "you are not authorized to delete such order");
+  
+}
+ 
     return response;
   }
 @PostMapping("/order/sendemail")

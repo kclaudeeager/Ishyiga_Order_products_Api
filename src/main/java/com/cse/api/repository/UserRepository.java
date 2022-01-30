@@ -14,6 +14,8 @@ import com.cse.api.model.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT u FROM User u WHERE u.email=?1")
     User findByEmailAddress(String emailAddress);
+     @Query("SELECT u FROM User u WHERE u.company=?1")
+     User findByCompany(String company);
 
     @Query("SELECT status FROM User u WHERE u.email=?1")
     Integer findstatusbyemail(String emailAddress);

@@ -44,7 +44,7 @@ public class AuthFilter extends GenericFilterBean {
                             Integer.parseInt(claims.get("role").toString()));
 
                     httpRequest.setAttribute("email", claims.get("email").toString());
-
+                
                 } catch (Exception e) {
                     System.out.println(e.toString());
                     httpResponse.sendError(HttpStatus.FORBIDDEN.value(), "invalid/expired please login again");

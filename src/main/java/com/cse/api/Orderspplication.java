@@ -43,7 +43,8 @@ public class Orderspplication {
 				"/api/v1/User/setrole/*",
 				"/api/v1/products/*",
 				"/api/v1/User/logout",
-				"/api/v1/order/*"
+				"/api/v1/order/*",
+				"/api/v1/orders/*"
 				);
 		return registrationBean;
 	}
