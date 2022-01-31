@@ -80,41 +80,46 @@ private EmailSender mailSender;
     return orders;
   }
 
-  @GetMapping("/orders/{id}")
-  public ResponseEntity<Order> getOrderById(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "id") Long orderId)
+  @GetMapping("/orders/{number}")
+  public List<Order> getOrderById(HttpServletRequest request,HttpServletResponse response,@PathVariable(value = "number") Integer orderNum)
       throws ResourceNotFoundException, IOException {
-    Order order = orderRepository.findById(orderId)
-        .orElseThrow(() -> new ResourceNotFoundException("order not found :: " + orderId));
+    List<Order> orders = new ArrayList<Order>();
+    List<Order> myorders = new ArrayList<Order>();
+  
         User user=userRepository.findByEmailAddress(request.getAttribute("email").toString());
         String company=user.getCompany();
 
-        ResponseEntity<Order> responseEntity=null;
-        if(order.getclient()==company || order.getsuplier()==company){
-          responseEntity=ResponseEntity.ok().body(order);
+        // ResponseEntity<Order> responseEntity=null;
+        orders=orderRepository.findAllCreatedAtTime(orderNum);
+        if(orders==null)
+        new ResourceNotFoundException("order not found :: " + orderNum);
+        for(int i=0;i<orders.size();i++)
+        if(orders.get(i).getclient().equals(company)|| orders.get(i).getsuplier().equals(company)){
+         myorders.add(orders.get(i));
 
-} 
-else{
-  response.sendError(HttpStatus.FORBIDDEN.value(), "you are not authorized to view such order");
-  
-}
-return responseEntity;
+          }
+      
+           // response.sendError(HttpStatus.FORBIDDEN.value(), "you are not authorized to view such order");
+        
+          
+return myorders;
   }
 
-  @DeleteMapping("/orders/{id}")
-  public Map<String, Boolean> deleteOrder(HttpServletRequest request,HttpServletResponse httpresponse,@PathVariable(value = "id") Long orderId)
+  @DeleteMapping("/orders/{number}")
+  public Map<String, Boolean> deleteOrder(HttpServletRequest request,HttpServletResponse httpresponse,@PathVariable(value = "number") Integer orderNum)
       throws ResourceNotFoundException, IOException {
-    Order order = orderRepository.findById(orderId)
-        .orElseThrow(() -> new ResourceNotFoundException("order not found :: " + orderId));
-        User user=userRepository.findByEmailAddress(request.getAttribute("email").toString());
-        String company=user.getCompany();
+        List<Order> orders = orderRepository.findAllCreatedAtTime(orderNum);
+        if(orders==null)
+           new ResourceNotFoundException("order not found :: " + orderNum);
+            User user=userRepository.findByEmailAddress(request.getAttribute("email").toString());
+            String company=user.getCompany();
+        
         Map<String, Boolean> response = new HashMap<>();
-        if(order.getclient()==company){
+        for(Order order:orders)
+        if(order.getclient().equals(company)){
           orderRepository.delete(order);
           response.put("deleted", Boolean.TRUE);
-} else{
-  httpresponse.sendError(HttpStatus.FORBIDDEN.value(), "you are not authorized to delete such order");
-  
-}
+} 
  
     return response;
   }

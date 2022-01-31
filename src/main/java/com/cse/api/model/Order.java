@@ -15,15 +15,17 @@ public class Order extends AuditModel {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+     @Id
+     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
+    @Column(name = "ordernum", unique = false)
+    private Integer ordernum;
+     
     @Column(name = "Pname", nullable = true)
     private String pname;
 
-    @Column(name = "client", nullable = true)
+    @Column(name = "client", nullable = false)
     private String client;
 
     @Column(name = "suplier", nullable = false)
@@ -36,8 +38,9 @@ public class Order extends AuditModel {
         super();
     }
 
-    public Order(String pname, String suplier, Integer quantity, String client) {
+    public Order(Integer ordernum, String pname, String suplier, Integer quantity, String client) {
         super();
+        this.ordernum=ordernum;
         this.client = client;
         this.pname = pname;
         this.suplier = suplier;
@@ -54,6 +57,13 @@ public class Order extends AuditModel {
 
     public String getpname() {
         return pname;
+    }
+
+    public void setordernum( Integer ordernum) {
+        this.ordernum = ordernum;
+    }
+    public Integer getordernum() {
+        return ordernum;
     }
 
     public void setpname(String pname) {

@@ -14,5 +14,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o FROM Order o WHERE o.client=?1")
     List<Order> findByClient(String client);
+
+    @Query("SELECT o FROM Order o WHERE o.ordernum=?1")
+    List<Order> findAllCreatedAtTime(Integer ordernumber);
  
 }
