@@ -124,12 +124,13 @@ public class UserController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<Object> signup(@RequestBody User User) throws javax.security.auth.message.AuthException {
-		User.setRole(0);
+		User.setRole(4);
+		User.setstatus(0);
+		
 		User UserCreated = userService.registerUser(User);
 
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("User", UserCreated);
-
 		return new ResponseEntity<>(data, HttpStatus.OK);
 	}
 
