@@ -71,26 +71,28 @@ public class UserController {
 	
 	}
 	
-	
 
 	@PostMapping("/login")
-	public ResponseEntity<Object> login(@RequestBody Map<String, Object> UserMap)
+	public Map<String, Object> login(@RequestBody Map<String, Object> UserMap)
 			throws javax.security.auth.message.AuthException {
 		String email = (String) UserMap.get("email");
 		String password = (String) UserMap.get("password");
-		user = userService.validateUser(email, password);
-		Map<String, Object> data = new HashMap<String, Object>();
+	//	user = userService.validateUser(email, password);
+		Map<String, Object> data=new HashMap<>();
 
-		data.put("User", user);
-		// System.out.print(user);
+		data.putAll(userService.validateUser(email, password));
+		User user=(User) (userService.validateUser(email, password)).get("User");
+		System.out.print("User"+user);
+		if(user!=null){
 		data.putAll(generateJWTToken(user));
 		// String tok = token;
 
 		userRepository.setStatusForUser(1, user.getEmail());
+		}
 		// userService.UpdateUser(user);
 		// System.out.println("my data are :" + data);
 		// System.out.println("my token is :" + tok);
-		return new ResponseEntity<>(data, HttpStatus.OK);
+		return data;
 	}
 
 	@PostMapping("/logout")
@@ -123,15 +125,15 @@ public class UserController {
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<Object> signup(@RequestBody User User) throws javax.security.auth.message.AuthException {
+	public Map<String,Object> signup(@RequestBody User User) throws javax.security.auth.message.AuthException {
 		User.setRole(0);
 		User.setstatus(0);
 		
-		User UserCreated = userService.registerUser(User);
+	//	Map UserCreated = userService.registerUser(User);
 
-		Map<String, Object> data = new HashMap<String, Object>();
-		data.put("User", UserCreated);
-		return new ResponseEntity<>(data, HttpStatus.OK);
+		// Map<String, Object> data = new HashMap<String, Object>();
+		// data.put("User", UserCreated);
+		return userService.registerUser(User);
 	}
 
 	public String token;
