@@ -45,7 +45,7 @@ public class UserController {
 	@GetMapping("/")
 	public Map<String,List<User>> getAllUsers() {
 		Map	response = new HashMap<>();
-		response.put("Users",userRepository.findAll())
+		response.put("Users",userRepository.findAll());
 		return response;
 	}
 
