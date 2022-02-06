@@ -44,9 +44,10 @@ public class UserController {
 	// get all Users
 	@GetMapping("/")
 	public Map<String,List<User>> getAllUsers() {
-		Map	response = new HashMap<>();
-		response.put("Users",userRepository.findAll());
-		return response;
+		Map	responses = new HashMap<>();
+		List<User> users=userRepository.findAll();
+		responses.put("Users",users);
+		return responses;
 	}
 
 	User user;
@@ -82,7 +83,7 @@ public class UserController {
 	//	user = userService.validateUser(email, password);
 		Map<String, Object> data=new HashMap<>();
 
-		data.putAll(userService.validateUser(email, password, "Invalid email or password"));
+		//data.putAll(userService.validateUser(email, password, "Invalid email or password"));
 		User user=(User) (userService.validateUser(email, password)).get("User");
 		System.out.print("User"+user);
 		if(user!=null){
