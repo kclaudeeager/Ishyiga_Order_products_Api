@@ -87,6 +87,7 @@ public class UserController {
 		User user=(User) (userService.validateUser(email, password)).get("User");
 		System.out.print("User"+user);
 		if(user!=null){
+			data.putAll((userService.validateUser(email, password)));
 		data.putAll(generateJWTToken(user));
 		// String tok = token;
 
