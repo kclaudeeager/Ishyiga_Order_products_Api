@@ -35,9 +35,12 @@ public class ProductController {
   }
 
   @GetMapping("/products")
-  public List<Product> getAllProducts(HttpServletRequest request) {
+  public Map<String, List<Product>> getAllProducts(HttpServletRequest request) {
     System.out.println("Request::: "+request.toString());
-    return productRepository.findAll();
+    Map	responses = new HashMap<>();
+    List<Product> products=productRepository.findAll();
+    responses.put("Products", products);
+    return responses;
   }
 
   @GetMapping("/products/{id}")
