@@ -124,7 +124,7 @@ return myorders;
     return response;
   }
 @PostMapping("/order/sendemail")
-public @Valid String SendEmail(HttpServletRequest request,@Valid @RequestBody Email email) {
+public @Valid Map<String,Email> SendEmail(HttpServletRequest request,@Valid @RequestBody Email email) {
 
 		String password="fljbcpaivjvzvoxf";
 		String tomail=email.getToEmail();
@@ -137,8 +137,9 @@ public @Valid String SendEmail(HttpServletRequest request,@Valid @RequestBody Em
 		//mailSender.SendSimpleEmail("ngabonziza@gmail.com","Hello this is Email from Springboot backend by mr. claude", "Testing Mailsender");
 		//mailSender.semdEmailWithAttachement(tomail, body, subject,"D:\\2nd_Year\\Semester I\\2nd_Year\\Semester I\\CCN A\\supcfg.pdf");
 
-
-	return "Email is successfully sent";
+    Map<String,Email> sentEmail=new HashMap<>();
+    sentEmail.put("Email is successfully sent", email);
+	return  sentEmail;
 	
 }
 //  @PutMapping("/orders/{id}")
