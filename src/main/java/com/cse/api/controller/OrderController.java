@@ -41,29 +41,27 @@ private EmailSender mailSender;
 
 
   @PostMapping("/orders")
-  public Order creatOrder(HttpServletRequest request,@Valid @RequestBody Order order) throws ResourceNotFoundException {
+  public Map<String,Order> creatOrder(HttpServletRequest request,@Valid @RequestBody Order order) throws ResourceNotFoundException {
     User user=userRepository.findByEmailAddress(request.getAttribute("email").toString());
     String client=user.getCompany();
     order.setclient(client);
-   
     User supplier=userRepository.findByCompany(order.getsuplier());
     Order newOrder=new Order();
-
-
     if(supplier==null){
       new ResourceNotFoundException("No such supplier found :: ");
-      
     }
     else{
       newOrder=orderRepository.save(order);;
     }
     System.out.println("the   suplier: "+supplier);
     System.out.println("Client: "+client+" Set "+order.getclient());
-    return newOrder;
+    Map<String,Order> myOrder=new HashMap<>();
+    myOrder.put("Order",newOrder);
+    return myOrder;
   }
 
   @GetMapping("/orders")
-  public List<Order> getAllOrders(HttpServletRequest request) {
+  public Map<String,List<Order>> getAllOrders(HttpServletRequest request) {
     List<Order> orders=new ArrayList<Order>();
     String role=request.getAttribute("role").toString();
     int rol=Integer.parseInt(role);
@@ -77,7 +75,9 @@ private EmailSender mailSender;
         orders=orderRepository.findByClient(company);
       }
     }
-    return orders;
+    Map<String,List<Order>> myOrder=new HashMap<>();
+    myOrder.put("Orders",orders);
+    return myOrder;
   }
 
   @GetMapping("/orders/{number}")
@@ -101,7 +101,6 @@ private EmailSender mailSender;
       
            // response.sendError(HttpStatus.FORBIDDEN.value(), "you are not authorized to view such order");
         
-          
 return myorders;
   }
 
